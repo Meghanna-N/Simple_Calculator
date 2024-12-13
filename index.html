@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Enhanced Calculator</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+     
+    }
+    .calculator {
+      background: linear-gradient(135deg, #74ebd5, #9face6);
+      padding: 20px;
+      border-radius: 15px;
+      box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+      width: 350px;
+    }
+    .display {
+      width: 93%;
+      height: 60px;
+      margin-bottom: 15px;
+      text-align: right;
+      padding: 0 10px;
+      font-size: 2em;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      background-color: #f9f9f9;
+    }
+    .buttons {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+    }
+    button {
+      height: 60px;
+      font-size: 1.2em;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    button:hover {
+      transform: scale(1.05);
+    }
+    .operator {
+      background: #74c69d;
+      color: white;
+    }
+    .operator:hover {
+      background: #52b788;
+    }
+    .clear {
+      background: #e63946;
+      color: white;
+    }
+    .clear:hover {
+      background: #d62839;
+    }
+    .function {
+      background: #ffafcc;
+      color: white;
+    }
+    .function:hover {
+      background: #ff8fa3;
+    }
+    .backspace {
+      background: #48cae4;
+      color: white;
+    }
+    .backspace:hover {
+      background: #0096c7;
+    }
+    button.number {
+      background: #ffffff;
+      color: #333;
+      border: 1px solid #ccc;
+    }
+    button.number:hover {
+      background: #f1f1f1;
+    }
+  </style>
+</head>
+<body>
+  <div class="calculator">
+    <input type="text" id="display" class="display" disabled>
+    <div class="buttons">
+      <button class="clear" onclick="clearDisplay()">C</button>
+      <button class="backspace" onclick="deleteLast()">⌫</button>
+      <button class="function" onclick="calculateSquareRoot()">√</button>
+      <button class="operator" onclick="setOperator('/')">÷</button>
+      <button class="number" onclick="appendNumber('7')">7</button>
+      <button class="number" onclick="appendNumber('8')">8</button>
+      <button class="number" onclick="appendNumber('9')">9</button>
+      <button class="operator" onclick="setOperator('*')">×</button>
+      <button class="number" onclick="appendNumber('4')">4</button>
+      <button class="number" onclick="appendNumber('5')">5</button>
+      <button class="number" onclick="appendNumber('6')">6</button>
+      <button class="operator" onclick="setOperator('-')">−</button>
+      <button class="number" onclick="appendNumber('1')">1</button>
+      <button class="number" onclick="appendNumber('2')">2</button>
+      <button class="number" onclick="appendNumber('3')">3</button>
+      <button class="operator" onclick="setOperator('+')">+</button>
+      <button class="function" onclick="calculatePercentage()">%</button>
+      <button class="number" onclick="appendNumber('0')">0</button>
+      <button class="number" onclick="appendNumber('.')">.</button>
+      <button class="function" onclick="calculateSquare()">x²</button>
+      <button onclick="calculate()">=</button>
+    </div>
+  </div>
+
+  <script>
+    let currentInput = '';
+    let previousInput = '';
+    let operator = null;
+
+    function appendNumber(number) {
+      currentInput += number;
+      updateDisplay();
+    }
+
+    function setOperator(op) {
+      if (currentInput === '') return;
+      if (previousInput !== '') {
+        calculate();
+      }
+      operator = op;
+      previousInput = currentInput;
+      currentInput = '';
+      updateDisplay(`${previousInput} ${operator}`);
+    }
+
+    function calculate() {
+      if (currentInput === '' || previousInput === '' || operator === null) return;
+
+      const num1 = parseFloat(previousInput);
+      const num2 = parseFloat(currentInput);
+      let result;
+
+      switch (operator) {
+        case '+':
+          result = num1 + num2;
+          break;
+        case '-':
+          result = num1 - num2;
+          break;
+        case '*':
+          result = num1 * num2;
+          break;
+        case '/':
+          result = num2 !== 0 ? num1 / num2 : 'Error';
+          break;
+        default:
+          return;
+      }
+
+      currentInput = result.toString();
+      operator = null;
+      previousInput = '';
+      updateDisplay();
+    }
+
+    function clearDisplay() {
+      currentInput = '';
+      previousInput = '';
+      operator = null;
+      updateDisplay();
+    }
+
+    function deleteLast() {
+      currentInput = currentInput.slice(0, -1);
+      updateDisplay();
+    }
+
+    function calculateSquare() {
+      if (currentInput === '') return;
+      const num = parseFloat(currentInput);
+      currentInput = (num * num).toString();
+      updateDisplay();
+    }
+
+    function calculateSquareRoot() {
+      if (currentInput === '') return;
+      const num = parseFloat(currentInput);
+      currentInput = Math.sqrt(num).toString();
+      updateDisplay();
+    }
+
+    function calculatePercentage() {
+      if (currentInput === '') return;
+      const num = parseFloat(currentInput);
+      currentInput = (num / 100).toString();
+      updateDisplay();
+    }
+
+    function updateDisplay(value = currentInput) {
+      const display = document.getElementById('display');
+      if (operator && previousInput) {
+        display.value = `${previousInput} ${operator} ${currentInput}`;
+      } else {
+        display.value = value || '0';
+      }
+    }
+  </script>
+</body>
+</html>
